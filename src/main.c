@@ -24,7 +24,6 @@ int main(void)
 	init_serial();
 	timer1_init();
 	srand(time(NULL));
-	lcd_init();
     sei();
 	while(1) {
     }
