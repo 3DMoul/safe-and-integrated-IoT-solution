@@ -5,6 +5,7 @@
 #include <time.h>
 #include "millis.h"
 #include "uart.h"
+#include "analogRead.h"
 
 #define BIT_SET(a, b) ((a) |= (1ULL << (b)))
 #define BIT_CLEAR(a,b) ((a) &= ~(1ULL<<(b)))
