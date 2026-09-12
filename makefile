@@ -16,7 +16,7 @@ BIN=exefile
 # OUT=${BIN}.elf ${BIN}.hex ${BIN}.lss
 OUT=${BIN}.hex
 
-SOURCES = src/main.c src/millis.c src/uart.c
+SOURCES = src/main.c src/millis.c src/uart.c src/analogRead.c
 
 LDFLAGS += -Wl,-u,vfprintf -lprintf_flt -lm
 
