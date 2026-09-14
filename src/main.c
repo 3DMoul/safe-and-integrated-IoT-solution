@@ -3,9 +3,12 @@
 #include <avr/interrupt.h>
 #include <stdio.h>
 #include <time.h>
+#include <math.h>
 #include "millis.h"
 #include "uart.h"
 #include "analogRead.h"
+
+#define IN_PIN PC0
 
 #define BIT_SET(a, b) ((a) |= (1ULL << (b)))
 #define BIT_CLEAR(a,b) ((a) &= ~(1ULL<<(b)))
@@ -23,7 +26,6 @@ int main(void)
 {
     millis_init();
 	init_serial();
-	timer1_init();
 	srand(time(NULL));
     sei();
 

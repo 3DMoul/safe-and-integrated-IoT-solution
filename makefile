@@ -6,17 +6,18 @@ AVRSIZE="C:\avr\bin\avr-size"
 
 MCU=atmega328p
 
-CFLAGS=-Wall -Wextra  -Wundef -pedantic \
-		-Os -std=gnu99 -DF_CPU=16000000UL -mmcu=${MCU}
+CFLAGS=-Wall -Wextra -Wundef -pedantic \
+		-Os -std=gnu99 -DF_CPU=16000000UL -mmcu=${MCU} \
+		-I./src/includes
+
 LDFLAGS=-mmcu=$(MCU)
 PORT=\\\\.\\COM3
 
 BIN=exefile
 
-# OUT=${BIN}.elf ${BIN}.hex ${BIN}.lss
 OUT=${BIN}.hex
 
-SOURCES = src/main.c src/millis.c src/uart.c src/analogRead.c
+SOURCES = src/main.c src/includes/millis.c src/includes/uart.c src/includes/analogRead.c
 
 LDFLAGS += -Wl,-u,vfprintf -lprintf_flt -lm
 
