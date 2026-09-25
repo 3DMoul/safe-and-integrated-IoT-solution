@@ -15,6 +15,8 @@
 
 static const char *TAG = "MCP9700A";
 
+static EventGroupHandle_t wifi_event_group;
+
 #define SENSOR_ADC_CHANNEL ADC_CHANNEL_0   // GPIO0 on ESP32-C6
 
 
