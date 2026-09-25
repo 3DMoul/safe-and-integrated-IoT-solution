@@ -23,7 +23,6 @@
   "idf.openOcdConfigs": [
     "board/esp32c6-builtin.cfg"
   ],
-  "idf.portWin": "COM3",
   "idf.currentSetup": "C:\\esp\\v6.0\\esp-idf",
   "idf.customExtraVars": {
     "IDF_TARGET": "esp32c6"
@@ -34,6 +33,7 @@
     "--query-driver=**",
     "--compile-commands-dir=c:\\Users\\svant\\OneDrive\\Desktop\\vscode\\turn in assignment work\\safe-and-integrated-IoT-solution\\build"
   ],
-  "idf.flashType": "UART"
+  "idf.flashType": "UART",
+  "idf.port": "COM3"
 }
 
