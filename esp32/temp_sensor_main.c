@@ -17,10 +17,11 @@ static const char *TAG = "MCP9700A";
 
 #define SENSOR_ADC_CHANNEL ADC_CHANNEL_0   // GPIO0 on ESP32-C6
 
-// wifi settings
+
+// wifi setup
+#include "wifisecrets.h" //wifi information
 #define WIFI_SSID "Tele2_9A1706_EXT2.4Gz"
 #define WIFI_PASSWORD "db"
-
 
 void app_main(void)
 {
