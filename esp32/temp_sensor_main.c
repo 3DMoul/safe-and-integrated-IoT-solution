@@ -166,7 +166,7 @@ void app_main(void)
         snprintf(
             json,
             sizeof(json),
-            "{\"device_id\":\"esp32-c6-01\",\"temperature\":%.2f,\"voltage\":%.3f}",
+            "{\"device_id\":\"Tempreture.01\",\"temperature\":%.2f,\"voltage\":%.3f}",
             temperature,
             voltage
         );
