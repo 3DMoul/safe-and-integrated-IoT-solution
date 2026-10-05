@@ -14,6 +14,7 @@
 #include "mqtt_client.h"
 
 static const char *TAG = "MCP9700A";
+static const char sensor_unit = 'C';
 
 static EventGroupHandle_t wifi_event_group;
 
@@ -166,9 +167,9 @@ void app_main(void)
         snprintf(
             json,
             sizeof(json),
-            "\n{\n\"sensorId\":\"Tempreture.01\",\n\"temperature\":%.2f,\n\"voltage\":%.3f\n}",
+            "\n{\n\"sensorId\":\"Temperature.01\",\n\"value\":%.1f,\n\"unit\":%c\n}",
             temperature,
-            voltage
+            sensor_unit
         );
 
         esp_mqtt_client_publish(
