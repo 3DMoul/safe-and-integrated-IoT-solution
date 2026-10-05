@@ -57,6 +57,7 @@ note: check with multimeter to se if you get right output
 ------
 
 --//Test the MQTT connection//--
+
 I put this in the command terminal
 --|| "C:\Program Files\Mosquitto\mosquitto_sub.exe" -h 192.168.0.20 -p 1883 -t "sensors/esp32-c6-01/temperature" -v ||--
 ![alt text](image.png)
@@ -65,6 +66,7 @@ it prints out exactly how i want it
 ---
 
 --//Test that the sensor responds to temperature changes//--
+
 I start the program and let it run for a while, then I blow hot air toward the sensor
 Normal:
 ![alt text](image-1.png)
@@ -74,6 +76,7 @@ Blowing hot air
 ---
 
 --//Test Wi-Fi recovery//--
+
 Here i disable the internet acces and then turn it on
 disabled:
 ![alt text](image-3.png)
@@ -83,12 +86,14 @@ enabled:
 ---
 
 --//Test MQTT from another machine//--
+
 this is from my laptop and the program is on my stationary:
 ![alt text](image-5.png)
 
 ---
 
 --//Check the JSON//--
+
 looking at how the JSON payload looks like 
 it should look like this:
 
@@ -102,5 +107,34 @@ Payload:
 
 it looks like this
 ![alt text](image-6.png)
+
+---
+
+--//Testing that parse_reading() and serialize_reading() works//--
+
+#include "json_reading.hpp"
+#include <iostream>
+
+int main() {
+    Reading reading = parse_reading(
+        R"({"sensorId":"sensor-1","value":23.5,"unit":"C"})"
+    );
+
+    std::cout << serialize_reading(reading) << '\n';
+}
+
+this code is a placeholder just to test the functions
+
+I used this command to compile and make into exe --|| g++ main.cpp json_reading.cpp -I. -o app.exe ||--
+Then i ran the exe with this command --|| .\app.exe ||--                                                  
+It gave the expected output.
+{                                                                                                             
+  "sensorId":"sensor-1",                                                                                                         "unit": "C",            
+  "value": 23.5
+}
+
+---
+
+--//
 
 ----////////////////////////////////////////////////////////////----
