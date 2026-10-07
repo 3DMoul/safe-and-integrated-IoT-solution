@@ -77,7 +77,7 @@ void start_mqtt_subscriber() {
     if (!mosq) {
         std::cerr << "Could not create MQTT client\n";
         mosquitto_lib_cleanup();
-        return 1;
+        return;
     }
 
     mosquitto_connect_callback_set(mosq, on_connect);
@@ -103,7 +103,7 @@ void start_mqtt_subscriber() {
 
         mosquitto_destroy(mosq);
         mosquitto_lib_cleanup();
-        return 1;
+        return;
     }
 
     rc = mosquitto_loop_forever(
