@@ -9,6 +9,11 @@ static const char* MQTT_HOST = "192.168.0.20";
 static const int MQTT_PORT = 1883;
 static const char* MQTT_TOPIC = "sensors/esp32-c6-01/temperature";
 
+struct MqttState {
+    std::optional<Reading>* latest;
+    std::mutex* mutex;
+};
+
 void on_connect(struct mosquitto* mosq, void* userdata, int result) {
     if (result == 0) {
         std::cout << "Connected to MQTT broker\n";
@@ -35,7 +40,11 @@ void on_connect(struct mosquitto* mosq, void* userdata, int result) {
     }
 }
 
-void on_message(struct mosquitto*, void*, const struct mosquitto_message* message) {
+void on_message(
+    struct mosquitto*,
+    void* userdata,
+    const struct mosquitto_message* message
+) {
     if (!message || !message->payload) {
         return;
     }
@@ -51,27 +60,36 @@ void on_message(struct mosquitto*, void*, const struct mosquitto_message* messag
     try {
         Reading reading = parse_reading(payload);
 
+        auto* state = static_cast<MqttState*>(userdata);
+
+        {
+            std::lock_guard<std::mutex> lock(*state->mutex);
+            *state->latest = reading;
+        }
+
         std::cout
             << "Valid reading:\n"
             << "Sensor: " << reading.sensor_id << '\n'
             << "Value: " << reading.value << " C\n";
 
     } catch (const std::exception& error) {
-        std::cerr
-            << "Invalid sensor data: "
-            << error.what()
-            << '\n';
+        std::cerr << "Invalid sensor data: " << error.what() << '\n';
     }
 }
 
 void start_mqtt_subscriber(std::optional<Reading>& latest, std::mutex& mutex) {
     mosquitto_lib_init();
 
+    MqttState state{
+        &latest,
+        &mutex
+    };
+
     struct mosquitto* mosq =
         mosquitto_new(
             "iot-backend",
             true,
-            nullptr
+            &state
         );
 
     if (!mosq) {
