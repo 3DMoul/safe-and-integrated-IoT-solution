@@ -122,5 +122,4 @@ void start_mqtt_subscriber() {
     mosquitto_destroy(mosq);
     mosquitto_lib_cleanup();
 
-    return 0;
 }
