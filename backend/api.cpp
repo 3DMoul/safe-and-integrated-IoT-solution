@@ -1,13 +1,26 @@
 #include "json_reading.hpp"
+#include "mqtt_subscriber.hpp"
 #include <httplib.h>
 #include <iostream>
 #include <mutex>
 #include <optional>
+#include <thread>
+
 
 int main() {
     httplib::Server server;
     std::mutex mutex;
     std::optional<Reading> latest;
+
+    //--------------MQTT THREAD---------------//
+
+    std::thread mqtt_thread([&]() {
+        start_mqtt_subscriber(latest, mutex);
+    });
+    mqtt_thread.detach();
+
+    //----------------------------------------//
+
     server.set_payload_max_length(4096);
     server.Get("/health", [](const auto&, auto& res) {
         res.set_content("ok", "text/plain");
