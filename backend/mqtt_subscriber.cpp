@@ -64,7 +64,7 @@ void on_message(struct mosquitto*, void*, const struct mosquitto_message* messag
     }
 }
 
-void start_mqtt_subscriber() {
+void start_mqtt_subscriber(std::optional<Reading>& latest, std::mutex& mutex) {
     mosquitto_lib_init();
 
     struct mosquitto* mosq =
