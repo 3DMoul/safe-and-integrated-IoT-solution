@@ -1,6 +1,8 @@
 #include "json_reading.hpp"
 #include "mqtt_subscriber.hpp"
+
 #include <httplib.h>
+#include <nlohmann/json.hpp>
 #include <iostream>
 #include <mutex>
 #include <optional>
