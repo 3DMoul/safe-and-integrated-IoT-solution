@@ -7,7 +7,63 @@ This assignment presents a safe and integrated IoT solution, focusing on how con
 --//      Background       //--
 --///////////////////////////--
 
+--// visual representation of the project code //--
+safe-and-integrated-IoT-solution/
+│
+├── esp32/
+│   ├── main/
+│   │   └── ... ESP32 firmware code
+│   └── wifisecrets.h
+│
+├── backend/
+│   ├── api.cpp
+│   ├── mqtt_subscriber.cpp
+│   ├── mqtt_subscriber.hpp
+│   ├── json_reading.cpp
+│   ├── json_reading.hpp
+│   ├── httplib.h
+│   ├── nlohmann/
+│
+└── README.md
+--// visual representation of the code in effect //--
 
+MCP9700A Temperature Sensor
+          |
+          | Analog voltage
+          v
+       ESP32-C6
+          |
+          | Reads ADC
+          | Calculates temperature
+          | Creates JSON
+          |
+          | Wi-Fi / MQTT
+          v
+    Mosquitto Broker
+    192.168.0.20:1883
+          |
+          | MQTT subscription
+          v
+   mqtt_subscriber.cpp
+          |
+          | Receives JSON payload
+          v
+    json_reading.cpp
+          |
+          | Parses and validates JSON
+          v
+    Latest valid reading
+    (Shared backend state)
+          |
+          | Accessed by api.cpp
+          v
+        REST API
+    127.0.0.1:8085
+          |
+          | HTTP GET
+          v
+       API Client
+    (curl / browser)
 
 --//JSON formating//--
 
@@ -175,8 +231,9 @@ I used this command to compile and make into exe --|| g++ main.cpp json_reading.
 Then i ran the exe with this command --|| .\app.exe ||--                                                  
 It gave the expected output.
 {                                                                                                             
-  "sensorId":"sensor-1",                                                                                                         "unit": "C",            
-  "value": 23.5
+    "sensorId":"sensor-1",                                                                                                         
+    "value": 23.5
+    "unit": "C",            
 }
 
 ---
