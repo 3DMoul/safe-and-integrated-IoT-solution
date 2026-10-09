@@ -167,7 +167,7 @@ Protocol: MQTT
 Topic: sensors/esp32-c6-01/temperature
 Modell: Publish/Subscribe
 
-i have a backend that take sensor readings form esp32.
+The ESP32-C6 publishes temperature readings as JSON messages to the Mosquitto MQTT broker. The C++ backend subscribes to the temperature topic and receives the messages through the broker.
 
 ----////////////////////////////////////////////////////////////----
 
@@ -248,12 +248,34 @@ here there is and error because i used a string instead of a JSON number for val
 --///////////////////--
 ------
 
+--//validation of JSON readings//--
+the validation happens in the backend in json_reading.cpp with the parse_reading() function it checks:
+
+- The message is a valid JSON object.
+- sensorId is a non-empty string.
+- value is a JSON number between -50 and 100.
+- unit is exactly "C".
+
+If a JSON message is invalid, the backend logs an error and rejects the reading. The invalid reading is not stored, and the latest valid reading remains unchanged.
+
+--//REST API access//--
+The REST API uses 127.0.0.1:8085, which means it can only be accessed from the computer running the backend. This reduces the risk of other devices on the network accessing the API directly. However, the API does not have authentication.
+
+--//The use of header file for wifi//--
+I store my Wi-Fi SSID and password in a separate header file called wifisecrets.h. This file is ignored by Git and is not uploaded to GitHub, preventing my Wi-Fi credentials from being shared publicly.
+
+--//MQTT security limitations//--
+My MQTT broker uses port 1883 without TLS encryption. This means the MQTT messages are sent without encryption. If the broker allows unauthenticated clients, another device on the network could potentially subscribe to messages or publish fake readings. A future improvement would be to add MQTT authentication and TLS encryption.
+
 ----////////////////////////////////////////////////////////////----
 
 --////////////////////////////////--
 --//    Logging & monitoring    //--
 --////////////////////////////////--
 ------
+--//ESP32 logging//--
+
+I use the ESP-IDF serial monitor to see what is happening on my ESP32-C6. The monitor shows when the ESP32 connects to Wi-Fi and receives an IP address. It also prints the raw ADC reading, calculated voltage, and temperature from the MCP9700A sensor. This helps me check that the sensor is working and updating its readings. I can also use the monitor to identify connection problems or errors.
 
 ----////////////////////////////////////////////////////////////----
 
