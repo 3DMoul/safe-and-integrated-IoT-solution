@@ -176,7 +176,8 @@ i have a backend that take sensor readings form esp32.
 --///////////////////--
 ------
 --//Why i choose JSON//--
-I chose JSON because it is lightweight, easy to read, and supported by both the ESP32 firmware and the C++ backend. It allows the sensor reading to be sent in a structured format over MQTT.(and i personaly think it looks better)
+I chose JSON because it is lightweight, easy to read, and supported by both the ESP32 firmware and the C++ backend. It allows the sensor reading to be sent in a structured format over MQTT.(and i personaly think it looks better).
+XML was not used because JSON was sufficient for the project's sensor data. JSON also requires less formatting for this simple message structure.(and i get scared when i see XML).
 
 --//JSON formating//--
 
@@ -186,9 +187,9 @@ I chose JSON because it is lightweight, easy to read, and supported by both the 
 "unit":"C"
 }
 
-sensorId: Identifies the sensor and wants a non-empty string
-value: Temperature reading and wants a JSON number
-unit: Temperature unit is just "C" its the unit of measurment
+sensorId: Identifies the sensor and wants a non-empty string.
+value: Temperature reading and wants a JSON number.
+unit: Temperature unit is just "C" its the unit of measurment.
 
 --//validation of JSON readings//--
 
@@ -198,6 +199,8 @@ the validation happens in the backend in json_reading.cpp with the parse_reading
 - sensorId is a non-empty string.
 - value is a JSON number between -50 and 100.
 - unit is exactly "C".
+
+If it is not valid you will get a error message.
 
 ----////////////////////////////////////////////////////////////----
 
