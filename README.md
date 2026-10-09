@@ -162,7 +162,7 @@ note: check with multimeter to se if you get right output
 
 I put this in the command terminal
 --|| "C:\Program Files\Mosquitto\mosquitto_sub.exe" -h 192.168.0.20 -p 1883 -t "sensors/esp32-c6-01/temperature" -v ||--
-![alt text](image.png)
+![alt text](MQTT connection test.png)
 it prints out exactly how i want it
 
 ---
@@ -171,9 +171,9 @@ it prints out exactly how i want it
 
 I start the program and let it run for a while, then I blow hot air toward the sensor
 Normal:
-![alt text](image-1.png)
+![alt text](normal test.png)
 Blowing hot air
-![alt text](image-2.png)
+![alt text](blowing hot air test.png)
 
 ---
 
@@ -181,16 +181,16 @@ Blowing hot air
 
 Here i disable the internet acces and then turn it on
 disabled:
-![alt text](image-3.png)
+![alt text](disabled wifi.png)
 enabled:
-![alt text](image-4.png)
+![alt text](enabled wifi.png)
 
 ---
 
 --//Test MQTT from another machine//--
 
 this is from my laptop and the program is on my stationary:
-![alt text](image-5.png)
+![alt text](another machine MQTT test.png)
 
 ---
 
@@ -208,7 +208,7 @@ Payload:
 }
 
 it looks like this
-![alt text](image-6.png)
+![alt text](JSON check.png)
 
 ---
 
@@ -241,9 +241,9 @@ It gave the expected output.
 
     1. MQTT connection failure
     Ran  -| Stop-Service -Name mosquitto |- in Administrator PowerShell its start sending signals that it cant connect and it stops sending new readings to the api/backend
-    ![alt text](image-9.png)
+    ![alt text](MQTT connection failure 1.png)
     Here i ran  -| start-Service -Name mosquitto |- in Administrator PowerShell it starts working again like normal
-    ![alt text](image-10.png)
+    ![alt text](MQTT connection failure 2.png)
 
     2. Invalid JSON message
     I send and intentionaly wrong reading
@@ -254,7 +254,7 @@ It gave the expected output.
         -t "sensors/esp32-c6-01/temperature" `
         -m '{"sensorId":"Temperature.01","value":"NOT_A_NUMBER","unit":"C"}'
     |-
-    ![alt text](image-12.png)
+    ![alt text](invalid JSON message.png)
 
 
 --//
