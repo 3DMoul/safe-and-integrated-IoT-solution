@@ -237,6 +237,25 @@ It gave the expected output.
 }
 
 ---
+--//    Deliberate error test    //--
+
+    1. MQTT connection failure
+    Ran  -| Stop-Service -Name mosquitto |- in Administrator PowerShell its start sending signals that it cant connect and it stops sending new readings to the api/backend
+    ![alt text](image-9.png)
+    Here i ran  -| start-Service -Name mosquitto |- in Administrator PowerShell it starts working again like normal
+    ![alt text](image-10.png)
+
+    2. Invalid JSON message
+    I send and intentionaly wrong reading
+    -|  
+        & "C:\Program Files\Mosquitto\mosquitto_pub.exe" `
+        -h 192.168.0.20 `
+        -p 1883 `
+        -t "sensors/esp32-c6-01/temperature" `
+        -m '{"sensorId":"Temperature.01","value":"NOT_A_NUMBER","unit":"C"}'
+    |-
+    ![alt text](image-12.png)
+
 
 --//
 
