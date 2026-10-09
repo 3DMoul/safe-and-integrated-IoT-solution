@@ -200,7 +200,7 @@ the validation happens in the backend in json_reading.cpp with the parse_reading
 - value is a JSON number between -50 and 100.
 - unit is exactly "C".
 
-If it is not valid you will get a error message.
+If a JSON message is invalid, the backend logs an error and rejects the reading. The invalid reading is not stored, and the latest valid reading remains unchanged.
 
 ----////////////////////////////////////////////////////////////----
 
