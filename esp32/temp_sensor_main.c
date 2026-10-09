@@ -167,7 +167,7 @@ void app_main(void)
         snprintf(
             json,
             sizeof(json),
-            "\n{\n\"sensorId\":\"Temperature.01\",\n\"value\":%.1f,\n\"unit\":%c\n}",
+            "\n{\n\"sensorId\":\"Temperature.01\",\n\"value\":%.1f,\n\"unit\":\"%c\"\n}",
             temperature,
             sensor_unit
         );
