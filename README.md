@@ -1,6 +1,9 @@
-## Introduction
+Introduction
 
-This assignment presents a safe and integrated IoT solution, focusing on how connected devices can work together while protecting data, systems, and users. It explores practical design considerations for building a reliable, secure, and effective IoT environment.
+In this project, I built an IoT temperature monitoring system using an ESP32-C6 and an MCP9700A sensor. The ESP32 sends temperature readings over Wi-Fi using MQTT to a Mosquitto broker.
+
+A C++ backend receives and validates the JSON data and provides a REST API to view the latest reading. The project also focuses on security, error handling, and connection recovery.
+
 ----////////////////////////////////////////////////////////////----
 
 --///////////////////////////--
@@ -273,9 +276,21 @@ My MQTT broker uses port 1883 without TLS encryption. This means the MQTT messag
 --//    Logging & monitoring    //--
 --////////////////////////////////--
 ------
---//ESP32 logging//--
 
+--//ESP32 logging//--
 I use the ESP-IDF serial monitor to see what is happening on my ESP32-C6. The monitor shows when the ESP32 connects to Wi-Fi and receives an IP address. It also prints the raw ADC reading, calculated voltage, and temperature from the MCP9700A sensor. This helps me check that the sensor is working and updating its readings. I can also use the monitor to identify connection problems or errors.
+
+--//Backend logging//--
+I use the backend terminal to monitor MQTT messages and errors. If an invalid JSON message is received, the backend prints an error explaining why the reading was rejected. The backend continues running and can still receive valid sensor readings afterward.
+
+--//API monitoring//--
+I use the REST API to check if the backend is running and if temperature readings are available.
+The /health endpoint returns ok when the API is running.
+The /api/readings/latest endpoint returns the latest valid temperature reading as JSON. If no reading is stored, it returns HTTP 404.
+The health endpoint only checks the API, not whether the ESP32 or MQTT broker is connected.
+
+--//MQTT connection monitoring//--
+I use the ESP32 serial monitor and the backend terminal to check for MQTT connection problems. To test this, I stopped the Mosquitto broker using Stop-Service -Name mosquitto in Administrator PowerShell. When the broker stopped, temperature readings could no longer reach the backend, and connection errors appeared in the logs. When I restarted Mosquitto using Start-Service -Name mosquitto, the ESP32 and backend automatically reconnected without needing to restart either program.This helps me detect MQTT connection failures and verify that the system can recover.
 
 ----////////////////////////////////////////////////////////////----
 
@@ -307,9 +322,10 @@ model: ESP32-C6
 
 --//sensor//--
 model: MCP9700E/A
-unit: temperature(C)
-range: (-50 C) to (100 C)
-note: check with multimeter to se if you get right output
+Type: Analog temperature sensor
+Unit: Degrees Celsius (°C)
+Sensor operating range: -40°C to +125°C
+Backend accepted reading range: -50°C to +100°C
 
 
 ----////////////////////////////////////////////////////////////----
