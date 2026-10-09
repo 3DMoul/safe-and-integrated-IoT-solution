@@ -245,7 +245,16 @@ It gave the expected output.
     Here i ran  -| start-Service -Name mosquitto |- in Administrator PowerShell it starts working again like normal
     ![alt text](MQTT connection failure 2.png)
 
-    2. Invalid JSON message
+    - Expected result: What did you expect the ESP32 and backend to do when the broker stopped?
+    -- Answer: i expected that the esp32 can still read the temperature sensor. And it will still try to publish MQTT messages. but without Mosquitto it will not be able to deliver those messages to the broker.
+
+    - Reason: Why did stopping Mosquitto interrupt communication?
+    -- Answer: Mosquitto is a middleman between the esp32 and the backend. so when i stopped Mosquitto there was no way for the readings to get to the backend.
+
+    - Recovery: Did the ESP32 and backend reconnect automatically when you restarted Mosquitto, or did you need to restart either program? 
+    -- Answer: the ESP32 and backend reconnect automatically and i did not have to restart the program.
+    
+    2. Invalid JSON syntax test
     I send and intentionaly wrong reading
     -|  
         & "C:\Program Files\Mosquitto\mosquitto_pub.exe" `
@@ -254,7 +263,19 @@ It gave the expected output.
         -t "sensors/esp32-c6-01/temperature" `
         -m '{"sensorId":"Temperature.01","value":"NOT_A_NUMBER","unit":"C"}'
     |-
-    ![alt text](invalid JSON message.png)
+    ![alt text](Invalid JSON syntax test.png)
+
+    - Did the backend print Invalid sensor data or another error?
+    -- Answer: the backend printed this error {sensorId:Temperature.01,value:NOT_A_NUMBER,unit:C}
+                                            Invalid sensor data: [json.exception.parse_error.101] parse error at line 1, column 2: syntax error while parsing object key - invalid literal; last read: '{s'; expected string literal
+    - Why is "NOT_A_NUMBER" invalid for the value field?
+    -- Answer: Because the missing quotation marks makes the message invalid. and even if it was valid it would get a error because its expecting a number not a string.
+    - Did the backend continue running after receiving the invalid message?
+    -- Answer: Yes
+    - Did valid readings from the ESP32 continue arriving afterward?
+    -- Answer: Yes
+    - Was the invalid value prevented from replacing the latest valid reading?
+    -- Answer: Yes
 
 
 --//
