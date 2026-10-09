@@ -4,6 +4,69 @@ This assignment presents a safe and integrated IoT solution, focusing on how con
 ----////////////////////////////////////////////////////////////----
 
 --///////////////////////////--
+--//  startup instructions //--
+--///////////////////////////--
+------
+
+--//software requirements//--
+ESP-IDF installed and configured for ESP32-C6.
+Mosquitto installed as a Windows service.
+MSYS2 UCRT64 with g++, the Mosquitto development library, and the JSON dependencies.
+---
+
+Check if Mosquitto is running
+|-
+Get-Service -Name mosquitto
+|-
+
+If Mosquitto is not running open up adminastrator powershell and write this
+|-
+Start-Service -Name mosquitto
+|-
+---
+
+Start with build and flash to the esp this should open up monitoring for the esp code on terminal 1
+This command will compile the esp32 firmware, upload the firmware to your esp32c6 and then display esp32 
+|-
+cd esp32
+idf.py build flash monitor
+|-
+---
+
+compile backend
+|-
+g++ backend/api.cpp backend/mqtt_subscriber.cpp backend/json_reading.cpp `
+  -Ibackend `
+  -I/ucrt64/include `
+  -L/ucrt64/lib `
+  -lmosquitto `
+  -lws2_32 `
+  -pthread `
+  -o backend/backend.exe
+|-
+
+to start backend functions like api and mqtt subscriber write this in terminal 2 this can be done form the project root directory.
+|-
+.\backend\backend.exe
+|-
+---
+
+to check for api latest reading and health open terminal 3
+
+for health
+|-
+curl.exe http://127.0.0.1:8085/health 
+|-
+
+for latest reading 
+|-
+curl.exe http://127.0.0.1:8085/api/readings/latest 
+|-
+
+----////////////////////////////////////////////////////////////----
+
+
+--///////////////////////////--
 --//      Background       //--
 --///////////////////////////--
 
@@ -101,10 +164,31 @@ Modell: Publish/Subscribe
 ------
 
 
+GET /health
+curl.exe http://127.0.0.1:8085/health
+
+this endpint is checking if the api is running. if it is runnning it outputs "ok". 
+
+GET /api/readings/latest
+curl.exe http://127.0.0.1:8085/api/readings/latest
 
 
 
+POST /api/readings	
+curl.exe -X POST http://127.0.0.1:8085/api/readings `
+  -H "Content-Type: application/json" `
+  -d '{\"sensorId\":\"Temperature.01\",\"value\":23.5,\"unit\":\"C\"}'
 
+This is to send a reading manualy
+
+this is a valid JSON reading
+![alt text](valid reading.png)
+
+Invalid JSON syntax
+![alt text](Invalid syntax.png)
+
+Invalid field value or type
+![alt text](Invalid field type.png)
 
 
 ----////////////////////////////////////////////////////////////----
@@ -130,6 +214,12 @@ Modell: Publish/Subscribe
 
 Wi-Fi name (SSID): in wifisecrets.h
 Wi-Fi password: in wifisecrets.h
+
+--//Wi-Fi connection//--
+The ESP32-C6 uses the Wi-Fi name (SSID) and password stored in wifisecrets.h. When Wi-Fi starts, the WIFI_EVENT_STA_START event triggers esp_wifi_connect() to connect to the network. Once connected and assigned an IP address, IP_EVENT_STA_GOT_IP is triggered. The program then sets WIFI_CONNECTED_BIT, allowing the program to continue with MQTT and sensor readings.
+
+--//Wi-Fi recovery//--
+If the Wi-Fi connection is lost, WIFI_EVENT_STA_DISCONNECTED is triggered this happens automatically by the ESP32-C6 Wi-Fi system. The program automatically calls esp_wifi_connect() to attempt reconnection. This allows the ESP32-C6 to reconnect without restarting the device.
 
 ----////////////////////////////////////////////////////////////----
 
@@ -209,7 +299,7 @@ Payload:
 
 it looks like this
 ![alt text](JSON check.png)
-
+//this is only for the testing this is not the final JSON formating
 ---
 
 --//Testing that parse_reading() and serialize_reading() works//--
