@@ -7,6 +7,31 @@ This assignment presents a safe and integrated IoT solution, focusing on how con
 --//  startup instructions //--
 --///////////////////////////--
 ------
+--//network setup//--
+Wi-Fi SSID
+-your wifi
+Wi-Fi password
+-your wifi password
+
+Creat a header called wifisecrets.h in esp32 folder and put in your wifi and password there. and put in this 
+#define WIFI_SSID "YourWiFi"
+#define WIFI_PASSWORD "YourPassword"
+
+Mosquitto IP
+-your IP
+
+The MQTT broker IP must match the IPv4 address of the computer running Mosquitto. Update the IP in both the ESP32 firmware and the C++ backend so they can connect to the same broker.
+to find IP in powershell write
+|-
+ipconfig
+|-
+
+MQTT port
+-1883
+
+API address	
+-127.0.0.1:8085
+
 
 --//software requirements//--
 ESP-IDF installed and configured for ESP32-C6.
@@ -24,15 +49,15 @@ If Mosquitto is not running open up adminastrator powershell and write this
 Start-Service -Name mosquitto
 |-
 ---
-
-Start with build and flash to the esp this should open up monitoring for the esp code on terminal 1
+terminal 1:
+Start with build and flash to the esp this should open up monitoring for the esp code
 This command will compile the esp32 firmware, upload the firmware to your esp32c6 and then display esp32 
 |-
 cd esp32
 idf.py build flash monitor
 |-
 ---
-
+terminal 2:
 compile backend
 |-
 g++ backend/api.cpp backend/mqtt_subscriber.cpp backend/json_reading.cpp `
@@ -45,13 +70,13 @@ g++ backend/api.cpp backend/mqtt_subscriber.cpp backend/json_reading.cpp `
   -o backend/backend.exe
 |-
 
-to start backend functions like api and mqtt subscriber write this in terminal 2 this can be done form the project root directory.
+to start backend functions like api and mqtt subscriber this can be done form the project root directory write this.
 |-
 .\backend\backend.exe
 |-
 ---
-
-to check for api latest reading and health open terminal 3
+terminal 3:
+to check for api latest reading and health
 
 for health
 |-
@@ -128,13 +153,6 @@ MCP9700A Temperature Sensor
        API Client
     (curl / browser)
 
---//JSON formating//--
-
-{
-"sensorId":"Temperature.01",
-"value":13.5,
-"unit":"C"
-}
 
 
 --///////////////////////////--
@@ -149,12 +167,37 @@ Protocol: MQTT
 Topic: sensors/esp32-c6-01/temperature
 Modell: Publish/Subscribe
 
+i have a backend that take sensor readings form esp32.
+
 ----////////////////////////////////////////////////////////////----
 
 --///////////////////--
 --// JSON/XML data //--
 --///////////////////--
 ------
+--//Why i choose JSON//--
+I chose JSON because it is lightweight, easy to read, and supported by both the ESP32 firmware and the C++ backend. It allows the sensor reading to be sent in a structured format over MQTT.(and i personaly think it looks better)
+
+--//JSON formating//--
+
+{
+"sensorId":"Temperature.01",
+"value":13.5,
+"unit":"C"
+}
+
+sensorId: Identifies the sensor and wants a non-empty string
+value: Temperature reading and wants a JSON number
+unit: Temperature unit is just "C" its the unit of measurment
+
+--//validation of JSON readings//--
+
+the validation happens in the backend in json_reading.cpp with the parse_reading() function it checks:
+
+- The message is a valid JSON object.
+- sensorId is a non-empty string.
+- value is a JSON number between -50 and 100.
+- unit is exactly "C".
 
 ----////////////////////////////////////////////////////////////----
 
@@ -167,11 +210,12 @@ Modell: Publish/Subscribe
 GET /health
 curl.exe http://127.0.0.1:8085/health
 
-this endpint is checking if the api is running. if it is runnning it outputs "ok". 
+this endpoint is checking if the api is running. if it is runnning it outputs "ok". 
 
 GET /api/readings/latest
 curl.exe http://127.0.0.1:8085/api/readings/latest
 
+this endpoint takes and gives you the latest reading stored in the backend/api. it returns "200 ok" if there is one and "404" for not foud.
 
 
 POST /api/readings	
@@ -183,12 +227,15 @@ This is to send a reading manualy
 
 this is a valid JSON reading
 ![alt text](valid reading.png)
+here is a reading created
 
 Invalid JSON syntax
 ![alt text](Invalid syntax.png)
+here there is and error because i removed a random " so it could not be parsed and the reading is not created
 
 Invalid field value or type
 ![alt text](Invalid field type.png)
+here there is and error because i used a string instead of a JSON number for value that was expected and the reading is not created
 
 
 ----////////////////////////////////////////////////////////////----
@@ -236,7 +283,7 @@ model: ESP32-C6
 --//sensor//--
 model: MCP9700E/A
 unit: temperature(C)
-range: (-50 C) to (50 C)
+range: (-50 C) to (100 C)
 note: check with multimeter to se if you get right output
 
 
@@ -321,9 +368,9 @@ I used this command to compile and make into exe --|| g++ main.cpp json_reading.
 Then i ran the exe with this command --|| .\app.exe ||--                                                  
 It gave the expected output.
 {                                                                                                             
-    "sensorId":"sensor-1",                                                                                                         
-    "value": 23.5
-    "unit": "C",            
+    "sensorId":"sensor-1",                                                                                                      
+    "value": 23.5,
+    "unit": "C"            
 }
 
 ---
